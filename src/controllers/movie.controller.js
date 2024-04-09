@@ -65,4 +65,45 @@ const setGenresToMovies = catchError(async (request, response) => {
     return response.json(genres);
 });
 
-module.exports = { index, create, show, destroy, update, setGenresToMovies };
+const setActorsToMovies = catchError(async (request, response) => {
+    const { id } = request.params;
+
+    const movie = await Movie.findByPk(id);
+
+    if (!movie) {
+        return response.status(404).json({ error: "Movie not found" });
+    }
+
+    await movie.setActors(request.body);
+
+    const actors = await movie.getActors();
+
+    return response.json(actors);
+});
+
+const setDirectorsToMovies = catchError(async (request, response) => {
+    const { id } = request.params;
+
+    const movie = await Movie.findByPk(id);
+
+    if (!movie) {
+        return response.status(404).json({ error: "Movie not found" });
+    }
+
+    await movie.setDirectors(request.body);
+
+    const directors = await movie.getDirectors();
+
+    return response.json(directors);
+});
+
+module.exports = {
+    index,
+    create,
+    show,
+    destroy,
+    update,
+    setGenresToMovies,
+    setActorsToMovies,
+    setDirectorsToMovies,
+};

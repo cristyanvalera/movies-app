@@ -3,7 +3,7 @@ const Director = require('../models/Director');
 const Movie = require('../models/Movie');
 
 const index = catchError(async (request, response) => {
-    const results = await Director.findAll({ include: Movie });
+    const results = await Director.findAll({ include: Movie, order: ['id'] });
 
     return response.json(results);
 });
@@ -52,7 +52,9 @@ const setMovies = catchError(async (request, response) => {
 
     const director = await Director.findByPk(id);
 
-    if (!director) return response.sendStatus(404);
+    if (!director) {
+        return response.status(404).json({ error: "Director not found" });
+    }
 
     await director.setMovies(request.body);
 

@@ -3,7 +3,7 @@ const Actor = require('../models/Actor');
 const Movie = require('../models/Movie');
 
 const index = catchError(async (request, response) => {
-    const results = await Actor.findAll({ include: Movie });
+    const results = await Actor.findAll({ include: Movie, order: ['id'] });
 
     return response.json(results);
 });
@@ -52,8 +52,9 @@ const setMovies = catchError(async (request, response) => {
 
     const actor = await Actor.findByPk(id);
 
-    if (!actor) return response.sendStatus(404);
-
+    if (! actor) {
+        return response.status(404).json({ error: "Actor not found" });
+    }
     await actor.setMovies(request.body);
 
     const movies = await actor.getMovies();
